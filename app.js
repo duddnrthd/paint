@@ -3,41 +3,59 @@ const ctx = canvas.getContext("2d");
 const colors = document.getElementsByClassName("jsColors");
 const range = document.getElementById("jsRange");
 const mode = document.getElementById("jsMode");
-const saveBtn = document.getElementById("jsSave")
+const saveBtn = document.getElementById("jsSave");
+
+const CANVAS_SIZE = 700;
+
+canvas.width = CANVAS_SIZE;
+canvas.height = CANVAS_SIZE;
 
 const INITIAL_COLOR = "black";
 
-const CANVAS_WIDTH = 700;
-const CANVAS_HEIGHT = 700;
-
 ctx.fillStyle = "white";
-ctx.fillRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
+ctx.fillRect(0, 0, 700, 700);
 ctx.strokeStyle = INITIAL_COLOR;
 ctx.fillStyle = INITIAL_COLOR;
-
 ctx.lineWidth = 2.5;
+
 
 let painting = false;
 let filling = false;
+
 
 function startPainting(){
     painting = true;
 }
 
+function stopPainting(){
+    painting = false;
+}
+
+
 function onMousemove(event){
     const x = event.offsetX;
     const y = event.offsetY;
+    
     if(!painting){
         ctx.beginPath();
-        ctx.moveTo(x,y);
-    } else{
+        ctx.moveTo(x, y);
+      } else {
         ctx.lineTo(x, y);
         ctx.stroke();
     }
+  
 }
 
-function stopPainting(){
-    painting = false;
+function changeColor(event){
+    const color = event.target.style.backgroundColor;
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+}
+
+function handleRangeChange(event){
+    const size = event.target.value;
+     ctx.lineWidth = size;
+    
 }
 
 function onMousedown(event){
@@ -54,9 +72,10 @@ function onMouseleave(event){
 
 function handleCanvasClick(){
     if(filling){
-    ctx.fillRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
+    ctx.fillRect(0, 0, 700, 700);
 }
 }
+
 function handleRightClick(event){
     event.preventDefault();
 }
@@ -71,18 +90,6 @@ if(canvas){
 }
 
 
-function changeColor(event){
-    const color = event.target.style.backgroundColor;
-    ctx.strokeStyle = color;
-    ctx.fillStyle = color;
-}
-
-function handRangeChange(event){
-    const size = event.target.value;
-     ctx.lineWidth = size;
-    
-     
-}
 
 function handleSaveClick(){
     const image = canvas.toDataURL("image/jpeg");
@@ -104,12 +111,20 @@ function handleModeClick(){
         
     }
 }
-
+function handleModeClick() {
+  if (filling === true) {
+    filling = false;
+    mode.innerText = "Fill";
+  } else {
+    filling = true;
+    mode.innerText = "Paint";
+  }
+}
 
 Array.from(colors).forEach(color => color.addEventListener("click", changeColor));
 
 if(range){
-    range.addEventListener("input", handRangeChange);
+    range.addEventListener("input", handleRangeChange);
 }
 
 if(mode){
@@ -119,3 +134,6 @@ if(mode){
 if(saveBtn){
     saveBtn.addEventListener("click", handleSaveClick);
 }
+
+
+
